@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Draw | Chat | Draw-Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/css/w3.css">
+  <script src="http://hongru.github.io/proj/canvas2image/canvas2image.js"></script>
+  <script>
+
+            function to_image(){
+                var canvas = document.getElementById("board");
+                document.getElementById("board").src = canvas.toDataURL();
+                Canvas2Image.saveAsPNG(canvas);
+            }
+        </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!Notification) {
+          alert('Desktop notifications not available in your browser.'); 
+          return;
+        }
+
+        if (Notification.permission !== "granted")
+          Notification.requestPermission();
+    });
+  </script>
+</head>
+<body class="chat">
+  <div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
+      <button onclick="w3_close()" class="w3-bar-item w3-large">Close &times;</button>
+      
+      <div class="colors">
+        <div class="color black"></div>
+        <div class="color red"></div>
+        <div class="color green"></div>
+        <div class="color blue"></div>
+        <div class="color yellow"></div>
+        <button class="w3-bar-item w3-large"onclick="clearCanvas()">Clear</button>
+      <button class="w3-bar-item w3-large" onclick="to_image()">Save</button>
+      </div>
+      
+      <canvas name="board" id="board" class="whiteboard" ></canvas>
+      <div id="drawing-feedback" class="drawing__message">
+    </div>
+  </div>
+  <div class="w3-teal">
+  <button class="w3-button w3-teal w3-xlarge" onclick="w3_open()">☰</button>
+</div>
+  <div class="chat__sidebar">
+    <h3 id="welcome-msg"></h3>
+    <h3>Room name:</h3>
+    <div id="room-name">
+    </div>
+    <h3>People:</h3>
+    <div id="users"></div>
+  </div>
+  <div class="chat__main">
+    <ol id="messages" class="chat__messages">
+    </ol>
+    <div id="feedback" class="typing__message">
+    </div>
+    <div class="chat__footer">
+    <form id="message-form">
+      <input name="message" type="text" placeholder="Message" autofocus autocomplete="off"/>
+      <button>Send</button>
+    </form>
+
+    <div class="filebutton">Send Image<input type="file" id="imagefile" accept="image/*"></div>
+  </br>
+
+    <div>
+    <button id="send-location">Send Location</button>
+  </div>
+  </div>
+  </div>
+
+  <script>
+      function w3_open() {
+          document.getElementById("mySidebar").style.display = "block";
+          jQuery('#drawing-feedback').html('');
+          jQuery('#drawing-feedback').hide();
+      }
+      function w3_close() {
+          document.getElementById("mySidebar").style.display = "none";
+          jQuery('#drawing-feedback').html('');
+          jQuery('#drawing-feedback').hide();
+      }
+      function clearCanvas() {
+        canvas = document.getElementById("board");
+        ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+</script>
+
+  <script id="image-message-template" type="text/template">
+    <li class="message">
+      <div class="message__title">
+        <h4>{{from}}</h4>
+        <span>{{createdAt}}</span>
+      </div>
+      <div class="message__body">
+        <p>
+          <img src="{{url}}"> </img>
+        </p>
+      </div>
+    </li>
+  </script>
+  
+  <script id="message-template" type="text/template">
+    <li class="message">
+      <div class="message__title">
+        <h4>{{from}}</h4>
+        <span>{{createdAt}}</span>
+      </div>
+      <div class="message__body">
+        <p>{{text}}</p>
+      </div>
+    </li>
+  </script>
+
+  <script id="location-message-template" type="text/template">
+    <li class="message">
+      <div class="message__title">
+        <h4>{{from}}</h4>
+        <span>{{createdAt}}</span>
+      </div>
+      <div class="message__body">
+        <p>
+          <a href="{{url}}" target="_blank">My Current Location</a>
+        </p>
+      </div>
+    </li>
+  </script>
+
+  <script id="typing-message-template" type="text/template">
+    <p><em>{{text}}</em></p>
+  </script>
+
+  <script id="drawing-message-template" type="text/template">
+    <p><em>{{text}}</em></p>
+  </script>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/libs/jquery-3.3.1.min.js"></script>
+  <script src="/js/libs/moment.js"></script>
+  <script src="/js/libs/mustache.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/libs/deparam.js"></script>
+</body>
+</html>
