@@ -2,14 +2,15 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Draw | Chat | Draw-Room</title>
+  <title>Draw | Discussion | Room</title>
   <link rel="stylesheet" href="/css/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" href="/css/w3.css">
   <script src="http://hongru.github.io/proj/canvas2image/canvas2image.js"></script>
   <script>
 
-            function to_image(){
+            function to_image()
+            {
                 var canvas = document.getElementById("board");
                 document.getElementById("board").src = canvas.toDataURL();
                 Canvas2Image.saveAsPNG(canvas);
@@ -17,14 +18,15 @@
         </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-        if (!Notification) {
+        if (!Notification) 
+        { 
           alert('Desktop notifications not available in your browser.'); 
           return;
-        }
-
+        } 
+          
         if (Notification.permission !== "granted")
-          Notification.requestPermission();
-    });
+            Notification.requestPermission();
+    });   
   </script>
 </head>
 <body class="chat">
