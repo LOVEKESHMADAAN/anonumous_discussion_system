@@ -15,28 +15,30 @@ var server=http.createServer(app);
 var io=socketIO(server);
 var hbs=require('hbs');
 var users=new Users();
-//test code
+//test code         
 var roomset=new Set();
 
 app.use(express.static(publicpath));
 app.use(favicon(publicpath + '/assets/favicon.ico'));
-
+         
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, '../public'));
-
-app.get('/', (req,res) =>{
+       
+app.get('/', (req,res) =>
+{ 
   var myArr = Array.from(roomset);
   res.render('index',{roomlist:myArr});
 });
-
+  
 hbs.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
-
+  
 io.on('connection', (socket) => {
   console.log('New user connected');
-
-  socket.on('join',(params,callback) => {
+  
+  socket.on('join',(params,callback) => 
+  { 
     if (!isRealString(params.name) || !isRealString(params.room))
     {
       return callback('Name and room name are required');
@@ -48,10 +50,10 @@ io.on('connection', (socket) => {
     console.log(filteredlist,'filtered users');
 
     if(filteredlist.length>0)
-    {
+    { 
       console.log('Username already exists');
       return callback('Same username already exists in room please try again !');
-    }
+    } 
 
     socket.join(params.room);
     users.removeUser(socket.id);
@@ -69,7 +71,8 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('NotificationMessage',(message)=>{
+  socket.on('NotificationMessage',(message)=>
+  {
      var user=users.getUser(socket.id);
 
      if(user)
@@ -79,13 +82,13 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('user image', function (msg) {
+ socket.on('user image', function (msg) {
       var user=users.getUser(socket.id);
       //console.log(msg);
       if(user)
-      {
-        socket.broadcast.to(user.room).emit('user image', user.name , msg);
-      }
+      { 
+        socket.broadcast.to(user.room).emit('user image', user.name , msg); 
+      } 
       console.log("image sent");
     });
 
@@ -102,9 +105,10 @@ io.on('connection', (socket) => {
 
     var user=users.getUser(socket.id);
 
-    if(user) {
+    if(user) 
+    { 
       socket.broadcast.to(user.room).emit('newTypingMessage',generateTypingMessage(user.name));
-    }
+    } 
 
   });
 
@@ -112,14 +116,16 @@ io.on('connection', (socket) => {
 
      var user=users.getUser(socket.id);
 
-    if(user) {
+    if(user) 
+    { 
       socket.broadcast.to(user.room).emit('hide-drawing-feedback');
-    }
-  });
+    } 
+  }); 
 
   socket.on('createLocationMessage',(coords) => {
     var user=users.getUser(socket.id);
-    if(user) {
+    if(user) 
+    {
       io.to(user.room).emit('newLocationMessage',generateLocationMessage(user.name,coords.latitude,coords.longitude));
     }
 
@@ -133,9 +139,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('drawing', (data) => {
+  socket.on('drawing', (data) => 
+  {
     var user=users.getUser(socket.id);
-    if(user) {
+    if(user) 
+    {
       io.to(user.room).emit('drawing', data);
     }
   });
@@ -147,9 +155,10 @@ io.on('connection', (socket) => {
       //test code
       var roomlist=users.getUserList(user.room);
       console.log(roomlist);
-      if(roomlist.length===0) {
+      if(roomlist.length===0) 
+      {  
         roomset.delete(user.room);
-      }
+      }  
       console.log(roomset);
       io.to(user.room).emit('updateUserList',users.getUserList(user.room));
       io.to(user.room).emit('newMessage',generateMessage('Admin',`${user.name} has left`));
@@ -158,13 +167,9 @@ io.on('connection', (socket) => {
     console.log('User was disconnected');
   });
 
-
-
-
 });
 
-
-
-server.listen(port,()=>{
+server.listen(port,()=>
+{ 
   console.log('Server started successfully on Port '+port);
 });
